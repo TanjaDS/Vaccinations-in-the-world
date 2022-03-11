@@ -46,8 +46,9 @@ class VaccinesDB:
         """
         self.cur.execute('''DROP TABLE IF EXISTS ''' + table)
         self.cur.execute('''CREATE TABLE IF NOT EXISTS ''' + table + 
-                            '''(ID INTEGER PRIMARY KEY AUTOINCREMENT,''' + query +
-                            ''')''')
+                        '''(ID INTEGER PRIMARY KEY AUTOINCREMENT,''' + query +
+                        ''' FOREIGN KEY (iso_code) REFERENCES countries (iso_code)
+                        ON DELETE CASCADE ON UPDATE NO ACTION)''')
 
     def load_to_table(self, table, columns):
         """ insert values into a table from a dataframe
@@ -171,10 +172,7 @@ def load_db(df):
     # create a table with daily vaccinations and insert values from a dataframe
     df.create_table("daily", "iso_code TEXT, date INTEGER,\
                     daily_vaccinations INTEGER,\
-                    daily_vaccinations_per_million INTEGER,\
-                    FOREIGN KEY (iso_code) REFERENCES countries\
-                    (iso_code) ON DELETE CASCADE\
-                    ON UPDATE NO ACTION")
+                    daily_vaccinations_per_million INTEGER,")
     df.load_to_table("daily", ["iso_code", "date", "daily_vaccinations",\
                     "daily_vaccinations_per_million"])
     # create a table with number of vaccinated people 
@@ -184,10 +182,7 @@ def load_db(df):
                     people_vaccinated INTEGER,\
                     people_fully_vaccinated INTEGER,\
                     people_vaccinated_per_hundred INTEGER,\
-                    people_fully_vaccinated_per_hundred INTEGER,\
-                    FOREIGN KEY (iso_code) REFERENCES countries\
-                    (iso_code) ON DELETE CASCADE\
-                    ON UPDATE NO ACTION")
+                    people_fully_vaccinated_per_hundred INTEGER,")
     df.load_to_table("people", ["iso_code","date", "people_vaccinated",\
                     "people_fully_vaccinated","people_vaccinated_per_hundred",\
                     "people_fully_vaccinated_per_hundred"])
@@ -195,24 +190,16 @@ def load_db(df):
     # and insert values from a dataframe 
     df.create_table("total", "iso_code TEXT, date INTEGER,\
                     total_vaccinations INTEGER,\
-                    total_vaccinations_per_hundred INTEGER,\
-                    FOREIGN KEY (iso_code) REFERENCES countries\
-                    (iso_code) ON DELETE CASCADE\
-                    ON UPDATE NO ACTION")  
+                    total_vaccinations_per_hundred INTEGER,")  
     df.load_to_table("total", ["iso_code", "date",\
                     "total_vaccinations","total_vaccinations_per_hundred"])
     # create a table with vaccines and insert values from a dataframe 
-    df.create_table("vaccines", "iso_code TEXT, vaccine TEXT,\
-                    FOREIGN KEY (iso_code) REFERENCES countries\
-                    (iso_code) ON DELETE CASCADE ON UPDATE NO ACTION")
+    df.create_table("vaccines", "iso_code TEXT, vaccine TEXT,")
     df.load_to_table_vaccines("vaccines", ["iso_code", "vaccine"])
     # create a table with number of boosters and insert values from a dataframe 
     df.create_table("booster", "iso_code TEXT, date INTEGER,\
                     total_boosters INTEGER,\
-                    total_boosters_per_hundred INTEGER,\
-                    FOREIGN KEY (iso_code) REFERENCES countries\
-                    (iso_code) ON DELETE CASCADE\
-                    ON UPDATE NO ACTION")
+                    total_boosters_per_hundred INTEGER,")
     df.load_to_table("booster", ["iso_code", "date",\
                     "total_boosters","total_boosters_per_hundred"])
     # create a table with countries names and iso codes 
